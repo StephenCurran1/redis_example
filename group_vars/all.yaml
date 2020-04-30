@@ -1,0 +1,21 @@
+---
+#------------------------------------------
+# General
+#------------------------------------------
+k8s_namespace: test
+
+app: client-api
+env: staging
+
+#------------------------------------------
+# Redis
+#------------------------------------------
+redis_cpu_requests: 1
+redis_memory_requests: 1Gi
+
+redis_cpu_limits: 1
+redis_memory_limits: 1Gi
+
+redis_max_memory: 1024mb
+
+redis_url: "redis.{{ k8s_namespace }}.svc.cluster.local:6379"

@@ -1,0 +1,57 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: redis-config
+  namespace: {{ k8s_namespace }}
+  labels:
+    app: {{ app }}
+    env: {{ env }}
+data:
+  redis.conf: |-
+    activerehashing yes
+    always-show-logo no
+    appendonly no
+    appendfsync no
+    client-output-buffer-limit normal 0 0 0
+    client-output-buffer-limit pubsub 32mb 8mb 60
+    client-output-buffer-limit slave 256mb 64mb 60
+    bind 0.0.0.0
+    daemonize no
+    databases 16
+    dbfilename dump.rdb
+    dir /bitnami/redis/data
+    hash-max-ziplist-entries 512
+    hash-max-ziplist-value 64
+    hll-sparse-max-bytes 3000
+    hz 10
+    latency-monitor-threshold 0
+    lazyfree-lazy-eviction no
+    lazyfree-lazy-expire no
+    lazyfree-lazy-server-del no
+    list-compress-depth 0
+    list-max-ziplist-size -2
+    logfile ""
+    loglevel notice
+    lua-time-limit 5000
+    maxmemory {{ redis_max_memory }}
+    no-appendfsync-on-rewrite no
+    notify-keyspace-events ""
+    pidfile /var/run/redis_6379.pid
+    port 6379
+    protected-mode no
+    rdbchecksum yes
+    rdbcompression yes
+    repl-disable-tcp-nodelay no
+    repl-diskless-sync no
+    repl-diskless-sync-delay 5
+    set-max-intset-entries 512
+    slowlog-log-slower-than 10000
+    slowlog-max-len 128
+    stop-writes-on-bgsave-error no
+    supervised no
+    tcp-backlog 511
+    tcp-keepalive 300
+    timeout 0
+    zset-max-ziplist-entries 128
+    zset-max-ziplist-value 64

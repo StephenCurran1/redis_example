@@ -1,0 +1,67 @@
+---
+# uses the Bitnami redis image: https://github.com/bitnami/bitnami-docker-redis
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: efoe-redis
+  namespace: {{ k8s_namespace }}
+  labels:
+    app: redis
+    env: {{ env }}
+spec:
+  serviceName: redis
+  selector:
+    matchLabels:
+      app: redis
+      env: {{ env }}
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: redis
+        env: {{ env }}
+    spec:
+      automountServiceAccountToken: false
+      terminationGracePeriodSeconds: 90
+      containers:
+      - name: efoe-redis
+        image: bitnami/redis:4.0.11
+        ports:
+        - containerPort: 6379
+        env:
+        - name: ALLOW_EMPTY_PASSWORD
+          value: "yes"
+        volumeMounts:
+          - name: config
+            mountPath: /opt/bitnami/redis/etc/redis.conf
+            subPath: redis.conf
+        livenessProbe:
+          initialDelaySeconds: 30
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 1
+          successThreshold: 1
+          tcpSocket:
+            port: 6379
+        readinessProbe:
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          timeoutSeconds: 1
+          failureThreshold: 5
+          successThreshold: 1
+          tcpSocket:
+            port: 6379
+        resources:
+          requests:
+            cpu: {{ redis_cpu_requests }}
+            memory: {{ redis_memory_requests }}
+          limits:
+            cpu: {{ redis_cpu_limits }}
+            memory: {{ redis_memory_limits }}
+      volumes:
+        - name: config
+          configMap:
+            name: redis-config
+      securityContext:
+        runAsUser: 1001
+        fsGroup: 1001
